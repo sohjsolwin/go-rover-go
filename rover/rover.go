@@ -19,10 +19,23 @@ type Rover struct {
 	inputCh  <-chan RovableCommand
 }
 
+// AwaitCommand configures a rover to listen on it's input channel for a command
+func (r *Rover) AwaitCommand() {
+	for {
+		command, ok := <-r.inputCh
+		if !ok {
+			// the channel was closed, and we have
+			// lost connection to the home planet
+			break
+		}
+		r.ProcessCommand(&command)
+	}
+}
+
 // ProcessCommand will take the supplied command and
 // either move or rotate the Rover, returning the
 // resulting position of the rover
-func (r *Rover) ProcessCommand(command *RovableCommand) (x, y int) {
+func (r *Rover) ProcessCommand(command *RovableCommand) {
 	if command.IsMotion() {
 		r.move(command)
 	} else if command.IsRotation() {
@@ -32,8 +45,6 @@ func (r *Rover) ProcessCommand(command *RovableCommand) (x, y int) {
 	} else {
 		panic("Unknown Command! Ai yai yai!!!")
 	}
-
-	return *r.currentX, *r.currentY
 }
 
 func (r *Rover) move(command *RovableCommand) {

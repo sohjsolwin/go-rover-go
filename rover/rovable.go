@@ -1,6 +1,6 @@
 package rover
 
-// Rovable is an object designed to move and rotate based on RovableCommands
-type Rovable interface {
+// IRovable is an object designed to move and rotate based on RovableCommands
+type IRovable interface {
 	ProcessCommand(command *RovableCommand)
 }
